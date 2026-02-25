@@ -1,5 +1,5 @@
 import axios from "axios";
 
 export const API = axios.create({
-  baseURL: "https://YOUR-BACKEND-URL.onrender.com"
+  baseURL: "https://hrms-backend-5ad7.onrender.com"
 });

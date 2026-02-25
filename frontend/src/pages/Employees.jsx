@@ -1,76 +1,141 @@
 import { useEffect, useState } from "react";
 import { API } from "../api/api";
 
-export default function Employees() {
+export default function Employees(){
 
-  const [employees, setEmployees] = useState([]);
-  const [form, setForm] = useState({
+  const [employees,setEmployees]=useState([]);
+
+  const [form,setForm]=useState({
     employee_id:"",
     full_name:"",
     email:"",
     department:""
   });
 
-  const load = async () => {
-    const res = await API.get("/employees/");
-    setEmployees(res.data);
-  };
+  const [summary,setSummary]=useState(null);
 
   useEffect(()=>{
     load();
   },[]);
 
-  const add = async () => {
-    await API.post("/employees/", form);
+  const load = async()=>{
+    const res = await API.get("/employees/");
+    setEmployees(res.data);
+  };
+
+  const add = async()=>{
+
+    await API.post("/employees/",form);
+
+    setForm({
+      employee_id:"",
+      full_name:"",
+      email:"",
+      department:""
+    });
+
     load();
   };
 
-  const remove = async (id) => {
+  const remove = async(id)=>{
     await API.delete(`/employees/${id}`);
     load();
   };
 
-  return (
+  const getSummary = async(id)=>{
+    const res = await API.get(`/dashboard/employee/${id}`);
+    setSummary(res.data);
+  };
+
+  return(
+
     <div>
 
-      <h2>Employees</h2>
+      <h2>Add Employee</h2>
 
-      <input placeholder="ID"
-        onChange={e=>setForm({...form, employee_id:e.target.value})}
+      <input placeholder="Employee ID"
+        value={form.employee_id}
+        onChange={e=>setForm({...form,employee_id:e.target.value})}
       />
 
       <input placeholder="Name"
-        onChange={e=>setForm({...form, full_name:e.target.value})}
+        value={form.full_name}
+        onChange={e=>setForm({...form,full_name:e.target.value})}
       />
 
       <input placeholder="Email"
-        onChange={e=>setForm({...form, email:e.target.value})}
+        value={form.email}
+        onChange={e=>setForm({...form,email:e.target.value})}
       />
 
       <input placeholder="Department"
-        onChange={e=>setForm({...form, department:e.target.value})}
+        value={form.department}
+        onChange={e=>setForm({...form,department:e.target.value})}
       />
 
       <button onClick={add}>Add</button>
 
-      {employees.length === 0 && <p>No employees found</p>}
 
-      <ul>
+      <h2>Employee List</h2>
 
-        {employees.map(e=>(
-          <li key={e.id}>
+      <table border="1" cellPadding="5">
 
-            {e.full_name} — {e.department}
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Department</th>
+            <th>Action</th>
+          </tr>
+        </thead>
 
-            <button onClick={()=>remove(e.id)}>
-              Delete
-            </button>
+        <tbody>
 
-          </li>
-        ))}
+          {employees.map(e=>(
 
-      </ul>
+            <tr key={e.id}>
+
+              <td>{e.employee_id}</td>
+              <td>{e.full_name}</td>
+              <td>{e.department}</td>
+
+              <td>
+
+                <button onClick={()=>remove(e.id)}>
+                  Delete
+                </button>
+
+                <button onClick={()=>getSummary(e.id)}>
+                  Summary
+                </button>
+
+              </td>
+
+            </tr>
+
+          ))}
+
+        </tbody>
+
+      </table>
+
+      {summary && (
+
+        <div>
+
+          <h3>Summary</h3>
+
+          Present: {summary.total_present}
+
+          <br/>
+
+          Absent: {summary.total_absent}
+
+        </div>
+
+      )}
 
     </div>
+
   );
 }

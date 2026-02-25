@@ -3,53 +3,105 @@ import { API } from "../api/api";
 
 export default function Attendance(){
 
-  const [employeeId,setEmployeeId]=useState("");
+  const [empId,setEmpId]=useState("");
+
+  const [date,setDate]=useState("");
+
   const [records,setRecords]=useState([]);
 
-  const load = async ()=>{
-    const res = await API.get(`/attendance/${employeeId}`);
-    setRecords(res.data);
-  };
-
-  const mark = async ()=>{
+  const mark = async()=>{
 
     await API.post("/attendance/",{
-      employee_db_id:parseInt(employeeId),
-      date:new Date().toISOString().split("T")[0],
+
+      employee_db_id:Number(empId),
+
+      date:date,
+
       status:"present"
+
     });
 
-    load();
+    alert("Marked");
+
+  };
+
+  const loadEmployee = async()=>{
+
+    const res = await API.get(`/attendance/${empId}`);
+
+    setRecords(res.data);
+
+  };
+
+  const loadDate = async()=>{
+
+    const res = await API.get(`/attendance/?attendance_date=${date}`);
+
+    setRecords(res.data);
+
   };
 
   return(
+
     <div>
 
       <h2>Attendance</h2>
 
+      Employee ID:
+
       <input
-        placeholder="Employee DB ID"
-        onChange={e=>setEmployeeId(e.target.value)}
+        onChange={e=>setEmpId(e.target.value)}
       />
 
-      <button onClick={load}>
-        Load Attendance
-      </button>
+      Date:
+
+      <input
+        type="date"
+        onChange={e=>setDate(e.target.value)}
+      />
+
+      <br/><br/>
 
       <button onClick={mark}>
-        Mark Present Today
+        Mark Present
       </button>
 
-      <ul>
+      <button onClick={loadEmployee}>
+        View Employee Attendance
+      </button>
 
-        {records.map(r=>(
-          <li key={r.id}>
-            {r.date} — {r.status}
-          </li>
-        ))}
+      <button onClick={loadDate}>
+        Filter by Date
+      </button>
 
-      </ul>
+
+      <h3>Records</h3>
+
+      <table border="1">
+
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+
+        <tbody>
+
+          {records.map(r=>(
+
+            <tr key={r.id}>
+              <td>{r.date}</td>
+              <td>{r.status}</td>
+            </tr>
+
+          ))}
+
+        </tbody>
+
+      </table>
 
     </div>
+
   );
 }
