@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect,useState } from "react";
 import { API } from "../api/api";
 
 export default function Employees(){
@@ -12,8 +12,6 @@ export default function Employees(){
     department:""
   });
 
-  const [summary,setSummary]=useState(null);
-
   useEffect(()=>{
     load();
   },[]);
@@ -24,16 +22,7 @@ export default function Employees(){
   };
 
   const add = async()=>{
-
     await API.post("/employees/",form);
-
-    setForm({
-      employee_id:"",
-      full_name:"",
-      email:"",
-      department:""
-    });
-
     load();
   };
 
@@ -42,50 +31,45 @@ export default function Employees(){
     load();
   };
 
-  const getSummary = async(id)=>{
-    const res = await API.get(`/dashboard/employee/${id}`);
-    setSummary(res.data);
-  };
-
   return(
 
     <div>
 
-      <h2>Add Employee</h2>
+      <h2>Employees</h2>
 
-      <input placeholder="Employee ID"
-        value={form.employee_id}
-        onChange={e=>setForm({...form,employee_id:e.target.value})}
-      />
+      <div className="form">
 
-      <input placeholder="Name"
-        value={form.full_name}
-        onChange={e=>setForm({...form,full_name:e.target.value})}
-      />
+        <input placeholder="ID"
+          onChange={e=>setForm({...form,employee_id:e.target.value})}
+        />
 
-      <input placeholder="Email"
-        value={form.email}
-        onChange={e=>setForm({...form,email:e.target.value})}
-      />
+        <input placeholder="Name"
+          onChange={e=>setForm({...form,full_name:e.target.value})}
+        />
 
-      <input placeholder="Department"
-        value={form.department}
-        onChange={e=>setForm({...form,department:e.target.value})}
-      />
+        <input placeholder="Email"
+          onChange={e=>setForm({...form,email:e.target.value})}
+        />
 
-      <button onClick={add}>Add</button>
+        <input placeholder="Department"
+          onChange={e=>setForm({...form,department:e.target.value})}
+        />
 
+        <button className="button" onClick={add}>
+          Add
+        </button>
 
-      <h2>Employee List</h2>
+      </div>
 
-      <table border="1" cellPadding="5">
+      <table className="table">
 
         <thead>
           <tr>
             <th>ID</th>
             <th>Name</th>
+            <th>Email</th>
             <th>Department</th>
-            <th>Action</th>
+            <th></th>
           </tr>
         </thead>
 
@@ -97,18 +81,16 @@ export default function Employees(){
 
               <td>{e.employee_id}</td>
               <td>{e.full_name}</td>
+              <td>{e.email}</td>
               <td>{e.department}</td>
 
               <td>
-
-                <button onClick={()=>remove(e.id)}>
+                <button
+                  className="button delete"
+                  onClick={()=>remove(e.id)}
+                >
                   Delete
                 </button>
-
-                <button onClick={()=>getSummary(e.id)}>
-                  Summary
-                </button>
-
               </td>
 
             </tr>
@@ -119,23 +101,8 @@ export default function Employees(){
 
       </table>
 
-      {summary && (
-
-        <div>
-
-          <h3>Summary</h3>
-
-          Present: {summary.total_present}
-
-          <br/>
-
-          Absent: {summary.total_absent}
-
-        </div>
-
-      )}
-
     </div>
 
   );
+
 }

@@ -22,30 +22,26 @@ export default function Dashboard(){
 
       <h2>Dashboard</h2>
 
-      <div style={{display:"flex",gap:"20px"}}>
+      <div className="card-container">
 
-        <Card title="Total Employees" value={data.total_employees}/>
-        <Card title="Present Today" value={data.present_today}/>
-        <Card title="Absent Today" value={data.absent_today}/>
+        <div className="card">
+          <h3>Total Employees</h3>
+          <h1>{data.total_employees}</h1>
+        </div>
+
+        <div className="card">
+          <h3>Present Today</h3>
+          <h1>{data.present_today}</h1>
+        </div>
+
+        <div className="card">
+          <h3>Absent Today</h3>
+          <h1>{data.absent_today}</h1>
+        </div>
 
       </div>
 
     </div>
 
   );
-}
-
-function Card({title,value}){
-
-  return(
-    <div style={{
-      padding:"20px",
-      background:"#e2e8f0",
-      width:"200px"
-    }}>
-      <h3>{title}</h3>
-      <h1>{value}</h1>
-    </div>
-  );
-
 }

@@ -4,38 +4,24 @@ import { API } from "../api/api";
 export default function Attendance(){
 
   const [empId,setEmpId]=useState("");
-
   const [date,setDate]=useState("");
-
   const [records,setRecords]=useState([]);
 
   const mark = async()=>{
 
     await API.post("/attendance/",{
-
       employee_db_id:Number(empId),
-
       date:date,
-
       status:"present"
-
     });
 
-    alert("Marked");
+    alert("Attendance marked");
 
   };
 
-  const loadEmployee = async()=>{
+  const load = async()=>{
 
     const res = await API.get(`/attendance/${empId}`);
-
-    setRecords(res.data);
-
-  };
-
-  const loadDate = async()=>{
-
-    const res = await API.get(`/attendance/?attendance_date=${date}`);
 
     setRecords(res.data);
 
@@ -47,37 +33,25 @@ export default function Attendance(){
 
       <h2>Attendance</h2>
 
-      Employee ID:
-
       <input
+        placeholder="Employee DB ID"
         onChange={e=>setEmpId(e.target.value)}
       />
-
-      Date:
 
       <input
         type="date"
         onChange={e=>setDate(e.target.value)}
       />
 
-      <br/><br/>
-
-      <button onClick={mark}>
+      <button className="button" onClick={mark}>
         Mark Present
       </button>
 
-      <button onClick={loadEmployee}>
-        View Employee Attendance
+      <button className="button" onClick={load}>
+        Load
       </button>
 
-      <button onClick={loadDate}>
-        Filter by Date
-      </button>
-
-
-      <h3>Records</h3>
-
-      <table border="1">
+      <table className="table">
 
         <thead>
           <tr>
